@@ -20,15 +20,30 @@ export default function EventIconImage({
   imageClassName,
   ...props
 }: EventIconImageProps) {
+  const normalizedSrc = typeof src === 'string' ? src.trim() : src
+  const hasRenderableSrc = typeof normalizedSrc === 'string'
+    ? normalizedSrc.length > 0
+    : (
+        normalizedSrc != null
+        && typeof normalizedSrc === 'object'
+        && 'src' in normalizedSrc
+        && typeof normalizedSrc.src === 'string'
+        && normalizedSrc.src.trim().length > 0
+      )
+
+  if (!hasRenderableSrc) {
+    return <div className={cn('relative overflow-hidden', containerClassName)} aria-hidden="true" />
+  }
+
   return (
     <div className={cn('relative overflow-hidden', containerClassName)}>
       <Image
         {...props}
-        src={src}
+        src={normalizedSrc}
         alt={alt}
         fill
         sizes={sizes}
-        className={cn('object-cover object-center', imageClassName)}
+        className={cn('shrink-0 object-cover object-center', imageClassName)}
       />
     </div>
   )
